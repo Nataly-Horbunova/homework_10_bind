@@ -14,17 +14,24 @@
 
         function bind(fn, ctx, ...bindArgs) {
             return function (...args) {
-                return fn.apply(ctx, [...bindArgs, ...args]);
+                const uuid = Date.now();
+                ctx[uuid] = fn;
+                const fnResult = ctx[uuid](...bindArgs, ...args);
+                delete ctx[uuid];
+
+                return fnResult;
             };
         };
+
 
         function func(b, c, d) {
             return this.a + b + c + d;
 
         }
 
-        const sum = bind(func, { a: 10 }, 7);
+        const sum = bind(func, { a: 10 }, 10);
         console.log(sum(10, 5));
+        console.log(sum(10, 12, 20));
 
     </script>
 
